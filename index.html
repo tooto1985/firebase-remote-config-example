@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-remote-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKI6TdKi8eQTgduY68P3Y1s25HB0HnY94",
+            authDomain: "test-23d9b.firebaseapp.com",
+            databaseURL: "https://test-23d9b.firebaseio.com",
+            projectId: "test-23d9b",
+            storageBucket: "test-23d9b.appspot.com",
+            messagingSenderId: "744870139507",
+            appId: "1:744870139507:web:7bb9727091a31c5a4d7c06"
+        };        
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script>
+        var remoteConfig = firebase.remoteConfig();
+        remoteConfig.settings = {
+            minimumFetchIntervalMillis: 10000,
+        };
+        remoteConfig.defaultConfig = {
+            device: 'none',
+            version: 0
+        };
+        // remoteConfig.fetchAndActivate().then(e=> {
+        // var text = remoteConfig.getValue('device').asString();
+        //     document.getElementById("output").innerHTML = text;
+        // });
+    </script>
+</head>
+<body>
+    <div id="output"></div>
+    <div id="app">
+        {{title}}
+        <hr>
+        <div>
+            device: {{device}}
+        </div>
+        <div>
+            version: {{version}}
+        </div>
+        <button @click="update">Update</button>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    title: 'Hello World',
+                    device: '',
+                    version: 0
+                }
+            },
+            created() {
+                this.init();
+            },
+            methods: {
+                init() {
+                    remoteConfig.activate().then(() => {
+                        this.device = remoteConfig.getValue('device').asString();
+                        this.version = remoteConfig.getValue('version').asString();
+                    })
+                },
+                update() {
+                    remoteConfig.fetch().then(() => {
+                        this.init();
+                    });
+                }
+            }
+        })
+    </script>
+</body>
+</html>
